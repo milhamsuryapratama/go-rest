@@ -73,3 +73,31 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 	defer db.Close()
 }
+
+// CreateKelas ...
+func CreateKelas(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	db := connectDb()
+
+	if r.Method == "POST" {
+		err := r.ParseForm()
+
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+
+		_, error := db.Exec("INSERT INTO kelas (nama_kelas) VALUES (?)", r.Form.Get("nama_kelas"))
+
+		if error != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+
+		return
+	}
+
+	http.Error(w, "", http.StatusBadRequest)
+
+	defer db.Close()
+}
