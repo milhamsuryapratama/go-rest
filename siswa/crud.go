@@ -20,18 +20,6 @@ type Siswa struct {
 	Kelas  kelas.Kelas
 }
 
-// func connectDb() (db *sql.DB) {
-// 	dbDriver := "mysql"
-// 	dbUser := "root"
-// 	dbPass := ""
-// 	dbName := "go-rest"
-// 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-// 	return db
-// }
-
 // GetAll is ...
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
