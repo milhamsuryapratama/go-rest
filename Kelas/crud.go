@@ -29,16 +29,14 @@ func connectDb() (db *sql.DB) {
 
 // GetAll is ...
 func GetAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	db := connectDb()
+
+	k := Kelas{}
 
 	if r.Method == "GET" {
 		isKelas, err := db.Query("SELECT * FROM kelas")
 
-		if err != nil {
-			panic(err.Error())
-		}
-
-		k := Kelas{}
 		kelas := []Kelas{}
 
 		for isKelas.Next() {
@@ -49,7 +47,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+				// return
 			}
 
 			k.ID = id
@@ -65,13 +63,13 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Set("Content-Type", "application/json")
 		w.Write(res)
 	}
 
 	http.Error(w, "", http.StatusBadRequest)
 
 	defer db.Close()
+	return
 }
 
 // CreateKelas ...
@@ -100,4 +98,20 @@ func CreateKelas(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "", http.StatusBadRequest)
 
 	defer db.Close()
+}
+
+// DeleteKelas ...
+func DeleteKelas(w http.ResponseWriter, r *http.Request) {
+	db := connectDb()
+
+	id := r.URL.Query().Get("id")
+	_, err := db.Exec("DELETE FROM kelas WHERE id = ? ", id)
+
+	if err != nil {
+		// panic(err.Error())
+		http.Error(w, "", http.StatusBadRequest)
+	}
+
+	defer db.Close()
+	// w.Write()
 }
