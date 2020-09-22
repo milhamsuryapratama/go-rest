@@ -1,8 +1,8 @@
 package kelas
 
 import (
-	"database/sql"
 	"encoding/json"
+	database "go-rest/Database"
 	"go-rest/response"
 	"net/http"
 
@@ -16,22 +16,10 @@ type Kelas struct {
 	NamaKelas string
 }
 
-func connectDb() (db *sql.DB) {
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := ""
-	dbName := "go-rest"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
-	if err != nil {
-		panic(err.Error())
-	}
-	return db
-}
-
 // GetAll is ...
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	db := connectDb()
+	db := database.ConnectDb()
 
 	k := Kelas{}
 
@@ -76,7 +64,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 // CreateKelas ...
 func CreateKelas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	db := connectDb()
+	db := database.ConnectDb()
 
 	res := response.Response{}
 
@@ -117,7 +105,7 @@ func CreateKelas(w http.ResponseWriter, r *http.Request) {
 
 // DeleteKelas ...
 func DeleteKelas(w http.ResponseWriter, r *http.Request) {
-	db := connectDb()
+	db := database.ConnectDb()
 
 	id := r.URL.Query().Get("id")
 	_, err := db.Exec("DELETE FROM kelas WHERE id = ? ", id)

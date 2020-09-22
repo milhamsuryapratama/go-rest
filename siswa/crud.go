@@ -1,8 +1,8 @@
 package siswa
 
 import (
-	"database/sql"
 	"encoding/json"
+	database "go-rest/Database"
 	"go-rest/kelas"
 	"go-rest/response"
 	"net/http"
@@ -20,22 +20,22 @@ type Siswa struct {
 	Kelas  kelas.Kelas
 }
 
-func connectDb() (db *sql.DB) {
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := ""
-	dbName := "go-rest"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
-	if err != nil {
-		panic(err.Error())
-	}
-	return db
-}
+// func connectDb() (db *sql.DB) {
+// 	dbDriver := "mysql"
+// 	dbUser := "root"
+// 	dbPass := ""
+// 	dbName := "go-rest"
+// 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+// 	if err != nil {
+// 		panic(err.Error())
+// 	}
+// 	return db
+// }
 
 // GetAll is ...
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	db := connectDb()
+	db := database.ConnectDb()
 
 	s := Siswa{}
 
@@ -86,7 +86,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 // CreateSiswa ...
 func CreateSiswa(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	db := connectDb()
+	db := database.ConnectDb()
 
 	res := response.Response{}
 
@@ -126,7 +126,7 @@ func CreateSiswa(w http.ResponseWriter, r *http.Request) {
 
 // DeleteSiswa ...
 func DeleteSiswa(w http.ResponseWriter, r *http.Request) {
-	db := connectDb()
+	db := database.ConnectDb()
 
 	id := r.URL.Query().Get("id")
 	_, err := db.Exec("DELETE FROM siswa WHERE id = ? ", id)
