@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"go-rest/kelas"
+	"go-rest/response"
 	"net/http"
 
 	// mysql exported ...
@@ -17,12 +18,6 @@ type Siswa struct {
 	Alamat string
 	Jk     string
 	Kelas  kelas.Kelas
-}
-
-// Response is ...
-type Response struct {
-	Status int
-	Pesan  string
 }
 
 func connectDb() (db *sql.DB) {
@@ -93,7 +88,7 @@ func CreateSiswa(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := connectDb()
 
-	res := Response{}
+	res := response.Response{}
 
 	if r.Method == "POST" {
 		err := r.ParseForm()
@@ -110,15 +105,17 @@ func CreateSiswa(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		res.Status = 200
-		res.Pesan = "Sukses!!!"
+		res = response.Response{
+			Status: 200,
+			Pesan:  "Sukses!!!",
+		}
 
 		var result, er = json.Marshal(res)
 		if er != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// http.Response(w, "", http.StatusCreated)
+
 		w.Write(result)
 	}
 
@@ -134,16 +131,15 @@ func DeleteSiswa(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	_, err := db.Exec("DELETE FROM siswa WHERE id = ? ", id)
 
-	res := Response{}
-
 	if err != nil {
 		// panic(err.Error())
 		http.Error(w, "", http.StatusBadRequest)
 	}
 
-	defer db.Close()
-	res.Status = 200
-	res.Pesan = "Sukses!!!"
+	res := response.Response{
+		Status: 200,
+		Pesan:  "Sukses!!!",
+	}
 
 	var result, er = json.Marshal(res)
 	if er != nil {
@@ -152,4 +148,6 @@ func DeleteSiswa(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write(result)
+
+	defer db.Close()
 }

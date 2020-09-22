@@ -3,6 +3,7 @@ package kelas
 import (
 	"database/sql"
 	"encoding/json"
+	"go-rest/response"
 	"net/http"
 
 	// mysql exported ...
@@ -77,6 +78,8 @@ func CreateKelas(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := connectDb()
 
+	res := response.Response{}
+
 	if r.Method == "POST" {
 		err := r.ParseForm()
 
@@ -92,7 +95,19 @@ func CreateKelas(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		return
+		res = response.Response{
+			Status: 200,
+			Pesan:  "Sukses!!!",
+		}
+
+		var result, er = json.Marshal(res)
+
+		if er != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+
+		w.Write(result)
 	}
 
 	http.Error(w, "", http.StatusBadRequest)
@@ -112,6 +127,18 @@ func DeleteKelas(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 	}
 
+	res := response.Response{
+		Status: 200,
+		Pesan:  "Suksses!!!",
+	}
+
+	var result, error = json.Marshal(res)
+
+	if error != nil {
+		http.Error(w, "", http.StatusBadRequest)
+	}
+
 	defer db.Close()
-	// w.Write()
+
+	w.Write(result)
 }
